@@ -45,20 +45,18 @@ sub make_classless_option {
 	foreach my $destination (keys %{$routes}) {
 		my ($net, $mask) = split '/', $destination;
 		die "Bad netmask in $destination" unless $mask =~ /^\d\d?$/ && $mask >= 0 && $mask <= 32;
-		push @bytes, octet_to_hex($mask);
+		push @bytes, $mask;
 
 		my $significant_octets = ceil($mask / 8);
 		my @octets = split /\./, $net;
-		push @bytes, map { octet_to_hex($_) } @octets[0 .. $significant_octets - 1];
+		push @bytes, @octets[0 .. $significant_octets - 1];
 
 		my @gw = split /\./, $routes->{$destination};
 		die "Bad gateway " . $routes->{$destination} unless scalar @gw == 4;
-		foreach (split /\./, $routes->{$destination}) {
-			push @bytes, octet_to_hex($_);
-		}
+		push @bytes, @gw;
 	}
 
-	return join(':', @bytes);
+	return join(':', map { octet_to_hex($_) } @bytes);
 }
 
 sub octet_to_hex {
