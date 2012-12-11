@@ -7,14 +7,14 @@ use POSIX qw/ceil/;
 
 # sample dhcpd.conf
 #
-# option classless-route-rfc code 121 = string;
-# option classless-route-win code 249 = string;
+# option static-route-rfc code 121 = string;
+# option static-route-win code 249 = string;
 #
 # subnet 192.168.1.0 netmask 255.255.255.0 {
 #   range 192.168.1.10 192.168.1.252;
 #   option routers 192.168.1.1;
-#   option classless-route-win 1d:52:b3:c2:40:c0:a8:01:01:10:c0:a8:c0:a8:01:01;
-#   option classless-route-rfc 1d:52:b3:c2:40:c0:a8:01:01:10:c0:a8:c0:a8:01:01;
+#   option static-route-win 1d:52:b3:c2:40:c0:a8:01:01:10:c0:a8:c0:a8:01:01;
+#   option static-route-rfc 1d:52:b3:c2:40:c0:a8:01:01:10:c0:a8:c0:a8:01:01;
 # }
 
 # Usage:
@@ -33,8 +33,8 @@ my $option_value = make_classless_option($routes);
 foreach (sort keys %$routes) {
 	printf "# %18s => %s\n", $_, $routes->{$_};
 }
-print "option classless-route-rfc $option_value;\n";
-print "option classless-route-win $option_value;\n";
+print "option static-route-rfc $option_value;\n";
+print "option static-route-win $option_value;\n";
 
 # see RFC 3442
 sub make_classless_option {
