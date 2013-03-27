@@ -1,0 +1,184 @@
+#!/usr/bin/perl
+
+use 5.010;
+use strict;
+use warnings;
+use autodie;
+use open ':locale';
+
+use Getopt::Long;
+use Pod::Usage;
+
+use AnyEvent::XMPP; # net-im/p5-AnyEvent-XMPP
+use AnyEvent::XMPP::IM::Connection;
+
+###############################################################################
+
+my ($cfg_file, $username, $password, $resource, $connect_timeout, $wait);
+
+GetOptions(
+	'file|f=s'		=> \$cfg_file,
+	'username|u=s'	=> \$username,
+	'password|p=s'	=> \$password,
+	'resource|r=s'	=> \$resource,
+	'timeout|t=i'	=> \$connect_timeout,
+	'wait|w=f'		=> \$wait,
+) or pod2usage(2);
+
+# default values for options
+$resource //= 'AnyEvent::XMPP ' . AnyEvent::XMPP->VERSION();
+$connect_timeout //= 5;
+$cfg_file //= $ENV{'HOME'}.'/.sendxmpprc';
+$wait //= 3;
+
+# parse config file if exists
+if (-r $cfg_file) {
+	my $mode = (stat($cfg_file))[2];
+	die "$cfg_file must not be readable by everyone\n" if ($mode & 07) != 0;
+	open(my $cfg_fh, '<', $cfg_file);
+	while (<$cfg_fh>) {
+		chomp;
+		s/#.*$//; # strip comments
+		next if /^\s*$/;
+		if (/([-\.\w]+@[-\.\w]+)\s+(\S+)\s*$/) {
+			$username //= $1;
+			$password //= $2;
+		} else {
+			die "bad config line: '$_'\n";
+		}
+	}
+	close $cfg_fh;
+}
+
+die "supply username/passowrd in command line or in $cfg_file\n" unless $username && $password;
+
+###############################################################################
+
+pod2usage(2) unless $ARGV[0];
+
+my @to = split(/,/, $ARGV[0]);
+
+my $message_text;
+{
+	local $/ = undef;
+	$message_text = <STDIN>;
+}
+
+die "non empty message is required\n" unless $message_text;
+
+my $con = AnyEvent::XMPP::IM::Connection->new(
+	jid => $username,
+	password => $password,
+	resource => $resource,
+	dont_retrieve_roster => 1,
+	connect_timeout => $connect_timeout,
+);
+
+my $message_sent_cv = AnyEvent->condvar;
+my $disconnected_cv = AnyEvent->condvar;
+
+$con->reg_cb(
+
+	session_ready => sub {
+		my ($con) = @_;
+		foreach (@to) {
+			$con->send_message($_, 'chat', undef, body => $message_text);
+		}
+		# wait for empty send buffer
+		$con->reg_cb(send_buffer_empty => sub { $message_sent_cv->send });
+	},
+
+	contact_request_subscribe => sub {
+		my ($con, $roster, $contact, $msg) = @_;
+		$contact->send_subscribed;
+		warn 'subscription request from '.$contact->jid." accepted\n";
+	},
+
+	error => sub { warn 'error: ' . $_[1]->string . "\n" },
+
+	message_error => sub {
+		my @err_info;
+		foreach (qw/text code condition/) {
+			push @err_info, "$_=" . $_[1]->$_ if $_[1]->$_;
+		}
+		my $node = $_[1]->xml_node;
+		push @err_info, 'jid=' . $node->attr('from') if $node;
+
+		warn 'message error: ' . join(', ', @err_info) . "\n";
+	},
+
+	message => sub {
+		my (undef, $msg) = @_;
+		warn $msg->type . ' message from: ' . $msg->from . ":\n" . $msg->any_body . "\n"
+				if defined $msg->any_body;
+	},
+
+	disconnect => sub {
+		my ($con, $h, $p, $reason) = @_;
+		$h //= '?'; $p //= '?';
+		warn "disconnected from $h:$p: $reason\n" if $reason;
+		$message_sent_cv->send; # if message don't send yet, it will not be sent
+		$disconnected_cv->send;
+	}
+);
+
+$con->connect;
+
+$message_sent_cv->wait;
+
+# wait for incoming messages (errors, subscribe requests)
+my $timer = AnyEvent->timer(
+		after => $wait,
+		cb => sub { $con->disconnect() }
+	);
+
+$disconnected_cv->wait;
+
+__END__
+
+=head1 NAME
+
+send-xmpp - send xmpp messages from the commandline.
+
+=head1 SYNOPSIS
+
+send-xmpp [options] <recipient_jid1>,..,<recipient_jidN>
+
+=head1 DESCRIPTION
+
+send-xmpp is a program to send XMPP (Jabber) messages from the
+commandline. Message body readed from <STDIN>
+
+=head1 OPTIONS
+
+B<-f>,B<--file> <file>
+use <file> configuration file instead of ~/.sendxmpprc
+
+B<-u>,B<--username> <jid>
+connect to server using <jid> instead of the one in the configuration file
+
+B<-p>,B<--password> <password>
+use <password> instead of the one in the configuration file
+
+B<-r>,B<--resource> <res>
+use resource <res> for the sender
+
+B<-t>,B<--timeout> <seconds>
+this sets the connection timeout
+
+B<-w>,B<--wait> <seconds>
+wait for incoming events, e. g. subscribe requests.
+
+=head1 CONFIG FILE
+
+You may define a '~/.sendxmpprc' file with the necessary data for
+xmpp-account, with a line of the format:
+
+   <user>@<host> <password>
+
+e.g.:
+
+xmpp-bot@jabber.vega.ru 1df266098fc41fa4b8ce23e24e5f8230
+
+NOTE: for your security, send-xmpp demands that the configuration file
+is not readable by everyone
