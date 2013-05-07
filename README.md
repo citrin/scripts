@@ -5,5 +5,6 @@ Some small and simple scripts used by me for for various tasks. Most of them tes
 * gajim_history.pl - show last N (100 by default) messages from [Gajim](http://gajim.org/) history (stored in SQLite DB)
 * gmirror-rebuild.sh - run gmirror rebuild for stale components after full server startup
 * jpeg2pdf.sh - pack several jpeg images into single pdf file (wrapper around [gs](http://www.ghostscript.com/))
+* lib_check.sh - list dynamic executables that have unresolvable shared library links
 * send-xmpp - perl script to send IM messages over XMPP protocol (Jabber)
 * simplify-gps-track.sh - wrapper around [gpsbabel](http://www.gpsbabel.org/) - reduce track to 400 points (useful to show on web site e. g. maps.google.com)
