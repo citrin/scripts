@@ -29,5 +29,5 @@ for i in $*; do
 
 	echo "try to convert $file to ${name}-small.gpx"
 	gpsbabel -t -i $format -f "$file" -x track,pack,title="$name" -x simplify,count=${POINTS} -o gpx -F "${name}-small.gpx" && \
-		echo "\tdone"
+		echo "	done"
 done
