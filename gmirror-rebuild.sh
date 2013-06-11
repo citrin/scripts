@@ -19,9 +19,7 @@ if [ ! -d /dev/mirror ]; then
 	exit
 fi
 
-cd /dev/mirror/
-
-for mirror in *; do
+for mirror in `gmirror status -gs | awk '{print $1}' | uniq`; do
 	gmirror status -s $mirror | awk '$4 == "(STALE)" {print $3}' | xargs gmirror rebuild $mirror
 	sleep 71
 done
