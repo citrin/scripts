@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# This script based on
+# http://www.deadman.org/sshscreen.php
+
+# I use 2 aliases with this script:
+# alias attach-tmux 'grabssh; tmux attach -d || tmux new'
+# alias ssh         'source ~/bin/fixssh; /usr/bin/ssh'
+
+[ -S $SSH_AUTH_SOCK ] || exit 1
+
+SSHVARS='SSH_CLIENT SSH_TTY SSH_AUTH_SOCK SSH_CONNECTION'
+
+if [ "$SHELL" = "/bin/tcsh" ]; then
+	RE='s/=/ "/;s/$/"/;s/^/setenv /'
+else
+	RE='s/=/="/;s/$/"/;s/^/export /'
+fi
+
+mv $HOME/bin/fixssh $HOME/bin/fixssh_saved
+
+for x in $SSHVARS; do
+    (eval echo $x=\$$x) | sed "$RE"
+done 1>$HOME/bin/fixssh
+
+chmod +x $HOME/bin/fixssh

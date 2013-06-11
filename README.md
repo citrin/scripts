@@ -4,6 +4,7 @@ Some small and simple scripts used by me for for various tasks. Most of them tes
 * flac_cue_to_mp3.sh - convert flac/wv image + CUE to set of mp3 files with ID3 tags from CUE
 * gajim_history.pl - show last N (100 by default) messages from [Gajim](http://gajim.org/) history (stored in SQLite DB)
 * gmirror-rebuild.sh - run gmirror rebuild for stale components after full server startup
+* grabssh - fix ssh-agent forwarding when attaching to an existing [tmux](http://tmux.sourceforge.net/) or screen
 * jpeg2pdf.sh - pack several jpeg images into single pdf file (wrapper around [gs](http://www.ghostscript.com/))
 * lib_check.sh - list dynamic executables that have unresolvable shared library links
 * send-xmpp - perl script to send IM messages over XMPP protocol (Jabber)
