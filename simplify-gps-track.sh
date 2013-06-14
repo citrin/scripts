@@ -16,11 +16,14 @@ for i in $*; do
 	cd `dirname "$i"`
 
 	case "$file" in
-	*.plt)
-		format=ozi
-		;;
 	*.gpx|*.gpx.gz)
 		format=gpx
+		;;
+	*.kml)
+		format=kml
+		;;
+	*.plt)
+		format=ozi
 		;;
 	*)
 		echo "$file: unknown track format"
