@@ -20,7 +20,7 @@ FILE=`basename "$1"`
 NAME=${FILE%.*}
 cd `dirname "$1"`
 
-LAME="lame -s 44.1 --vbr-new -V $QUALITY -B 320"
+LAME="lame --vbr-new -V $QUALITY -B 320"
 
 case $FILE in
 	*.ape)
