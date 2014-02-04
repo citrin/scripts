@@ -63,5 +63,5 @@ case $FILE in
 
 renice -n +15 -p $$ 2>/dev/null
 
-mp3splt -f -T2 -a -c "$CUE" -o "@n @a - @t" "${NAME}.mp3"
+mp3splt -f -T2 -a -c "$CUE" -o "@N2 @a - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
