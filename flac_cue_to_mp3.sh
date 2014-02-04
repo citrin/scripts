@@ -33,9 +33,9 @@ case $FILE in
 		;;
 	*.flac)
 		# find .cue file
-		if [ -f "${FILE}.cue" ]; then
+		if [ -e "${FILE}.cue" ]; then
 			CUE="${FILE}.cue"
-		elif [ -f "${NAME}.cue" ]; then
+		elif [ -e "${NAME}.cue" ]; then
 			CUE="${NAME}.cue"
 		else
 			echo "Can't find .cue file"
