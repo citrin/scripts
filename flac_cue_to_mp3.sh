@@ -8,6 +8,7 @@
 # quality (default = 4).  0 = highest quality.
 
 : ${QUALITY=3}
+: ${CUE_ENCODING=latin1}
 
 set -ex
 
@@ -22,38 +23,38 @@ cd `dirname "$1"`
 
 LAME="lame --vbr-new -V $QUALITY -B 320"
 
+# find .cue file for all types exept .wv (contains embedded CUE)
+if [ "${FILE##*.}" = "wv" ]; then
+	CUE="${NAME}.cue"
+else
+	# find .cue file and convert it to UTF
+	if [ -e "${FILE}.cue" ]; then
+		CUE="${FILE}.cue"
+	elif [ -e "${NAME}.cue" ]; then
+		CUE="${NAME}.cue"
+	else
+		echo "Can't find .cue file"
+		exit 64
+	fi
+
+	iconv -f $CUE_ENCODING -t utf-8 < "$CUE" > "${CUE}.utf"
+	CUE="${CUE}.utf"
+fi
+
 case $FILE in
 	*.ape)
-		CUE="${NAME}.cue"
-		iconv -f cp1251 -t utf-8 < "$CUE" > "${CUE}.utf"
-		CUE="${CUE}.utf"
 		mac.exe "$FILE" "${NAME}.wav" -d
 		$LAME "${NAME}.wav" "${NAME}.mp3"
 		rm "${NAME}.wav"
 		;;
 	*.flac)
-		# find .cue file
-		if [ -e "${FILE}.cue" ]; then
-			CUE="${FILE}.cue"
-		elif [ -e "${NAME}.cue" ]; then
-			CUE="${NAME}.cue"
-		else
-			echo "Can't find .cue file"
-			exit 64
-		fi
-		iconv -f cp1251 -t utf-8 < "$CUE" > "${CUE}.utf"
-		CUE="${CUE}.utf"
 		flac -c -d "$FILE" | $LAME - "${NAME}.mp3"
 		;;
 	*.wv)
-		CUE="${NAME}.cue"
 		wvunpack --no-utf8-convert -c "${FILE}" > $CUE
 		wvunpack "${FILE}" -o - | $LAME - "${NAME}.mp3"
 		;;
 	*.wav)
-		CUE="${NAME}.cue"
-		iconv -f cp1251 -t utf-8 < "${NAME}.cue" > "${NAME}.cue.utf"
-		CUE="${NAME}.cue.utf"
 		$LAME "$FILE" "${NAME}.mp3"
 		;;
 	*)
