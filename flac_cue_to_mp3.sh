@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # emerge media-sound/mp3splt media-sound/lame
-# portmaster audio/mp3splt audio/lame audio/flac audio/wavpack
+# portmaster audio/mp3splt audio/lame audio/flac audio/wavpack audio/mp3gain
 
 # -V n   0 <= n <= 9
 # Enable  VBR  (Variable  BitRate)  and specifies the value of VBR
@@ -65,3 +65,5 @@ renice -n +15 -p $$ 2>/dev/null
 
 mp3splt -f -T2 -a -c "$CUE" -o "@N2 @a - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
+
+mp3gain -k -a -s i *.mp3
