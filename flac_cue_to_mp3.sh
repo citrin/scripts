@@ -67,4 +67,6 @@ renice -n +15 -p $$ 2>/dev/null
 mp3splt -f -T2 -a -c "$CUE" -o "@N2 @a - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
 
-mp3gain -k -a -s i *.mp3
+# mp3gain broken: undo ID3 tags often not written
+# and changes are irreversible
+#mp3gain -k -a -s i *.mp3
