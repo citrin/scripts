@@ -89,5 +89,5 @@ foreach my $file (@maps) {
     print $out_fh "IMPORT FILENAME=\"$file\" ANTI_ALIAS=$anti_alias CLIP_COLLAR=LAT_LON CLIP_COLLAR_BOUNDS=$minlon,$minlat,$maxlon,$maxlat CONTRAST_MODE=$contrast_mode CONTRAST_SHARED=$contrast_shared COLOR_INTENSITY_FULL=$color_intensity\n"
 }
 
-print $out_fh "\nEXPORT_RASTER FORCE_SQUARE_PIXELS=YES TYPE=ECW FILENAME=\"export.ecw\" TARGET_COMPRESSION=$compression "
-           . ($spatial_res ? "SPATIAL_RES=$spatial_res" : "") . "\n\n";
+#print $out_fh "\nEXPORT_RASTER FORCE_SQUARE_PIXELS=YES TYPE=ECW FILENAME=\"export.ecw\" TARGET_COMPRESSION=$compression "
+#           . ($spatial_res ? "SPATIAL_RES=$spatial_res" : "") . "\n\n";
