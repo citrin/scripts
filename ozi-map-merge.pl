@@ -8,8 +8,6 @@ use autodie;
 
 ##  Settings
 
-my $anti_alias       = 'YES';                # YES, NO
-
 # CONTRAST_MODE (raster only) - specifies the type of contrast adjustment to apply to the data.
 # * NONE - no contrast adjustment applied (this is the default)
 # * PERCENTAGE - apply a percentage contrast adjustment. The
@@ -59,7 +57,7 @@ END
 print $out_fh "LOAD_PROJECTION $proj\n\n"           if ($proj);
 
 FILE:
-foreach my $file (@maps) {
+foreach my $file (sort @maps) {
     my ($minlat, $minlon, $maxlat, $maxlon) = (10000,10000,-10000,-10000);
 
 	# OziExplorer Map File Format
@@ -86,7 +84,7 @@ foreach my $file (@maps) {
 	warn sprintf "crop to bounds: latitude: %2.5f .. %2.5f, longitude: %2.5f .. %2.5f\n",
 		$minlat, $maxlat, $minlon, $maxlon;
 
-    print $out_fh "IMPORT FILENAME=\"$file\" ANTI_ALIAS=$anti_alias CLIP_COLLAR=LAT_LON CLIP_COLLAR_BOUNDS=$minlon,$minlat,$maxlon,$maxlat CONTRAST_MODE=$contrast_mode CONTRAST_SHARED=$contrast_shared COLOR_INTENSITY_FULL=$color_intensity\n"
+    print $out_fh "IMPORT FILENAME=\"$file\" CLIP_COLLAR=LAT_LON CLIP_COLLAR_BOUNDS=$minlon,$minlat,$maxlon,$maxlat CONTRAST_MODE=$contrast_mode CONTRAST_SHARED=$contrast_shared COLOR_INTENSITY_FULL=$color_intensity\n"
 }
 
 #print $out_fh "\nEXPORT_RASTER FORCE_SQUARE_PIXELS=YES TYPE=ECW FILENAME=\"export.ecw\" TARGET_COMPRESSION=$compression "
