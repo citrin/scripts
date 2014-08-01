@@ -39,9 +39,7 @@ my $proj;
 
 ##  Action
 
-opendir my $dir_fh, '.';
-my @maps = grep { /\.map\z/ && -f $_ } readdir $dir_fh;
-closedir $dir_fh;
+my @maps = sort glob('*.map');
 
 open my $out_fh, '>', 'run.gms';
 print $out_fh <<'END';
@@ -57,7 +55,7 @@ END
 print $out_fh "LOAD_PROJECTION $proj\n\n"           if ($proj);
 
 FILE:
-foreach my $file (sort @maps) {
+foreach my $file (@maps) {
     my ($minlat, $minlon, $maxlat, $maxlon) = (10000,10000,-10000,-10000);
 
 	# OziExplorer Map File Format
