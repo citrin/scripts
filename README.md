@@ -7,6 +7,7 @@ Some small and simple scripts used by me for for various tasks. Most of them tes
 * grabssh - fix ssh-agent forwarding when attaching to an existing [tmux](http://tmux.sourceforge.net/) or screen
 * jpeg2pdf.sh - pack several jpeg images into single pdf file (wrapper around [gs](http://www.ghostscript.com/))
 * lib_check.sh - list dynamic executables that have unresolvable shared library links
+* ozi-map-merge.pl - generate Global Mapper script to merge raster maps (georeferenced by OziExplorer)
 * procstat-v.pl - parse 'procstat -v' (FreeBSD) output and show in human readable form
 * resize.sh - resize photos (before publish)
 * send-xmpp - perl script to send IM messages over XMPP protocol (Jabber)
