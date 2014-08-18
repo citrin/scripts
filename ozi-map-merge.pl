@@ -41,7 +41,8 @@ my $proj;
 
 my @maps = sort glob('*.map');
 
-open my $out_fh, '>', 'run.gms';
+my $script = $ARGV[0] || 'run.gms';
+open my $out_fh, '>', $script;
 print $out_fh <<'END';
 GLOBAL_MAPPER_SCRIPT VERSION=1.00
 // See Global Mapper Scripting Language Reference
@@ -70,7 +71,8 @@ foreach my $file (@maps) {
 	warn "processing $file\n";
     while (<$map_fh>) {
 		# MMPLL,1,  58.000000,  62.000000
-        if (/MMPLL,\d,\s*(\-?\d+\.\d+),\s*(\-?\d+\.\d+)/) {
+        if (/MMPLL,\d,\s*(-?[.\d]+),\s*(-?[.\d]+)/) {
+			warn "lat $2, lon $1\n";
 			# round to 5' net; not (for scale up to 1:50_000)
             $minlat = int($2*12+0.5)/12 if $2 < $minlat;
             $maxlat = int($2*12+0.5)/12 if $2 > $maxlat;
