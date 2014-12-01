@@ -53,6 +53,7 @@ while ($l = <STDIN>) {
 
 foreach my $pid (sort keys %$vm_objs) {
 
+	my $size = 0;
 	say "\n=== PID $pid ===\n";
 
 	foreach my $type ( sort keys %{ $vm_objs->{$pid} } ) {
@@ -62,9 +63,11 @@ foreach my $pid (sort keys %$vm_objs) {
 		foreach ( sort { $b->{res} <=> $a->{res} } @{ $vm_objs->{$pid}->{$type} } ) {
 			printf "%s %s size %7s, RES %7s, PRES %5s, shadow %5s, ref count %3d\n",
 				$_->{prot}, $_->{flags}, hum_size($_->{size}), hum_size($_->{res}), hum_size($_->{pres}), hum_size($_->{shadow}), $_->{ref};
+				$size += $_->{size};
 		}
 		say '';
-	}
+	} # type
+	say "Summary size: " . hum_size($size);
 }
 
 ###############################################################################
