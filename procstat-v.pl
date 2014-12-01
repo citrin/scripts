@@ -6,7 +6,7 @@
 use 5.012;
 use warnings;
 
-# XXX - may be res/pres/shadow no always 4k pages, but also superpages (if used).
+# XXX - may be res/pres/shadow not always 4k pages, but also superpages (if used).
 use constant PAGE_SIZE => 4096;
 
 # VM object types
