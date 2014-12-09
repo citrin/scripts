@@ -4,11 +4,11 @@
 
 POINTS=400 # maximum number of points in resulting track
 
-for i in $*; do
+for i; do
 	file=`basename "$i"`
 	name=${file%.*}
 
-	if [ ! -f $i ]; then
+	if [ ! -f "$i" ]; then
 		echo "$i: No such file"
 		continue
 	fi
