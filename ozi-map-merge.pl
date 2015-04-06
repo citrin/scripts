@@ -53,15 +53,15 @@ SET_BG_COLOR COLOR=RGB(255,255,255)
 
 END
 
-print $out_fh "LOAD_PROJECTION $proj\n\n"           if ($proj);
+print $out_fh "LOAD_PROJECTION $proj\n\n" if $proj;
 
 FILE:
 foreach my $file (@maps) {
-    my ($minlat, $minlon, $maxlat, $maxlon) = (10000,10000,-10000,-10000);
+	my ($minlat, $minlon, $maxlat, $maxlon) = (10000,10000,-10000,-10000);
 
 	# OziExplorer Map File Format
-	#  http://www.oziexplorer3.com/eng/help/map_file_format.html
-    open my $map_fh, '<', $file;
+	# http://www.oziexplorer3.com/eng/help/map_file_format.html
+	open my $map_fh, '<', $file;
 	my $header = <$map_fh>;
 	if ($header !~ /^OziExplorer Map Data File Version \d/) {
 		warn "$file is not OziExplorer map file\n";
@@ -69,25 +69,25 @@ foreach my $file (@maps) {
 		next FILE;
 	}
 	warn "processing $file\n";
-    while (<$map_fh>) {
+	while (<$map_fh>) {
 		# MMPLL,1,  58.000000,  62.000000
-        if (/MMPLL,\d,\s*(-?[.\d]+),\s*(-?[.\d]+)/) {
+		if (/MMPLL,\d,\s*(-?[.\d]+),\s*(-?[.\d]+)/) {
 			warn "lat $2, lon $1\n";
 			my $p_lat = $2 + 180; # shift coordinates to work with positive values
 			my $x_lon = $1 + 180;
-			# round to 5' net; not (for scale up to 1:50_000)
-            $minlat = int($p_lat*12+0.5)/12 if $p_lat < $minlat;
-            $maxlat = int($p_lat*12+0.5)/12 if $p_lat > $maxlat;
-            $minlon = int($x_lon*12+0.5)/12 if $x_lon < $minlon;
-            $maxlon = int($x_lon*12+0.5)/12 if $x_lon > $maxlon;
-        }
-    }
+			# round to 5' net (for scale up to 1:50_000)
+			$minlat = int($p_lat*12+0.5)/12 if $p_lat < $minlat;
+			$maxlat = int($p_lat*12+0.5)/12 if $p_lat > $maxlat;
+			$minlon = int($x_lon*12+0.5)/12 if $x_lon < $minlon;
+			$maxlon = int($x_lon*12+0.5)/12 if $x_lon > $maxlon;
+		}
+	}
 	close $map_fh;
-	$minlat -= 180; $maxlat -= 180;  $minlon -= 180; $maxlon -= 180; # shift back
+	$minlat -= 180; $maxlat -= 180; $minlon -= 180; $maxlon -= 180; # shift back
 	warn sprintf "crop to bounds: latitude: %2.5f .. %2.5f, longitude: %2.5f .. %2.5f\n",
 		$minlat, $maxlat, $minlon, $maxlon;
 
-    print $out_fh "IMPORT FILENAME=\"$file\" CLIP_COLLAR=LAT_LON CLIP_COLLAR_BOUNDS=$minlon,$minlat,$maxlon,$maxlat CONTRAST_MODE=$contrast_mode CONTRAST_SHARED=$contrast_shared COLOR_INTENSITY_FULL=$color_intensity\n"
+	print $out_fh "IMPORT FILENAME=\"$file\" CLIP_COLLAR=LAT_LON CLIP_COLLAR_BOUNDS=$minlon,$minlat,$maxlon,$maxlat CONTRAST_MODE=$contrast_mode CONTRAST_SHARED=$contrast_shared COLOR_INTENSITY_FULL=$color_intensity\n"
 }
 
 #print $out_fh "\nEXPORT_RASTER FORCE_SQUARE_PIXELS=YES TYPE=ECW FILENAME=\"export.ecw\" TARGET_COMPRESSION=$compression "
