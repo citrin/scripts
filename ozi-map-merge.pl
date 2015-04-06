@@ -73,14 +73,17 @@ foreach my $file (@maps) {
 		# MMPLL,1,  58.000000,  62.000000
         if (/MMPLL,\d,\s*(-?[.\d]+),\s*(-?[.\d]+)/) {
 			warn "lat $2, lon $1\n";
+			my $p_lat = $2 + 180; # shift coordinates to work with positive values
+			my $x_lon = $1 + 180;
 			# round to 5' net; not (for scale up to 1:50_000)
-            $minlat = int($2*12+0.5)/12 if $2 < $minlat;
-            $maxlat = int($2*12+0.5)/12 if $2 > $maxlat;
-            $minlon = int($1*12+0.5)/12 if $1 < $minlon;
-            $maxlon = int($1*12+0.5)/12 if $1 > $maxlon;
+            $minlat = int($p_lat*12+0.5)/12 if $p_lat < $minlat;
+            $maxlat = int($p_lat*12+0.5)/12 if $p_lat > $maxlat;
+            $minlon = int($x_lon*12+0.5)/12 if $x_lon < $minlon;
+            $maxlon = int($x_lon*12+0.5)/12 if $x_lon > $maxlon;
         }
     }
 	close $map_fh;
+	$minlat -= 180; $maxlat -= 180;  $minlon -= 180; $maxlon -= 180; # shift back
 	warn sprintf "crop to bounds: latitude: %2.5f .. %2.5f, longitude: %2.5f .. %2.5f\n",
 		$minlat, $maxlat, $minlon, $maxlon;
 
