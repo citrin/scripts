@@ -3,7 +3,7 @@
 # to rebuild stale gmirror components after reboot
 # add to root cron:
 #
-# @reboot	sleep 7753; /usr/local/sbin/gmirror-rebuild.sh
+# @reboot	sleep 7753 && /usr/local/sbin/gmirror-rebuild.sh
 
 set -e
 
