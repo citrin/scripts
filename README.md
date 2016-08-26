@@ -5,6 +5,7 @@ Some small and simple scripts used by me for for various tasks. Most of them tes
 * gajim_history.pl - show last N (100 by default) messages from [Gajim](http://gajim.org/) history (stored in SQLite DB)
 * gmirror-rebuild.sh - run gmirror rebuild for stale components after full server startup
 * grabssh - fix ssh-agent forwarding when attaching to an existing [tmux](http://tmux.sourceforge.net/) or screen
+* hdd-r-speed.sh - run short read benchmark for all HDD
 * jpeg2pdf.sh - pack several jpeg images into single pdf file (wrapper around [gs](http://www.ghostscript.com/))
 * lib_check.sh - list dynamic executables that have unresolvable shared library links
 * ozi-map-merge.pl - generate Global Mapper script to merge raster maps (georeferenced by OziExplorer)
