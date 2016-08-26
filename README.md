@@ -12,3 +12,4 @@ Some small and simple scripts used by me for for various tasks. Most of them tes
 * resize.sh - resize photos (before publish)
 * send-xmpp - perl script to send IM messages over XMPP protocol (Jabber)
 * simplify-gps-track.sh - wrapper around [gpsbabel](http://www.gpsbabel.org/) - reduce track to 400 points (useful to show on web site e. g. maps.google.com)
+* split-image.sh - split image to 4 smaller ones (e. g. to print A3 image on A4 printer)
