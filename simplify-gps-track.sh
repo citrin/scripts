@@ -4,7 +4,7 @@
 
 POINTS=400 # maximum number of points in resulting track
 
-for i; do
+for i in $@; do
 	file=`basename "$i"`
 	name=${file%.*}
 
