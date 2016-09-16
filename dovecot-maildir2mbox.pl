@@ -23,11 +23,11 @@ my $keywords = load_keywords("$in_mdir/dovecot-keywords");
 
 my @in_files;
 
-for my $subdir ("$in_mdir/cur","$in_mdir/new") {
+for my $subdir ("$in_mdir/cur", "$in_mdir/new") {
 	opendir(my $dh, $subdir);
 	while (readdir $dh) {
 		next if /^\./ || ! -f "$subdir/$_";
-		push @in_files,"$subdir/$_";
+		push @in_files, "$subdir/$_";
 	}
 	closedir $dh;
 }
