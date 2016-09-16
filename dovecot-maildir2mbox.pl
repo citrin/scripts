@@ -8,7 +8,7 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
-my $formatter = 'formail'; # installed with profcmail
+my $formatter = 'formail'; # installed with procmail
 
 pod2usage(2) if scalar @ARGV != 2;
 
@@ -78,17 +78,19 @@ foreach my $in_file (@in_files) {
 sub load_keywords {
 	my $f = shift;
 	my %k; #  letter -> label, e. g. a -> NonJunk
+	# in dovecot-keywords file labels numbered by 0, 1, 2 ...
+	# in maildir filename flags letters a, b, c, ... z are used
 	open my $fh, '<', $f;
 	while (<$fh>) {
 		chomp;
 		die "bad line: $_" unless /^(\d+)\s+(\S+)$/;
+		# 0 -> a, 1 -> b, 2 -> c, e. t. c.
 		my $letter = chr(ord('a') + $1);
 		$k{$letter} = $2;
 	}
 	close $fh;
 	return \%k;
 }
-
 
 __END__
 
@@ -103,11 +105,25 @@ dovecot-maildir2mbox.pl maildir/.Sent mailbox/Sent
 =head1 DESCRIPTION
 
 dovecot-maildir2mbox.pl is a script to convert maildir with dovecot extensions
-to mbox (with dovecot's metadata)
+to mbox (with dovecot's metadata).
+
+To convert maildir run the script with two arguments:
+
+=over 2
+
+=item *
+  path to directory with maildir (with cur and new subdirs inside)
+
+=item *
+  path to mailbox file to be created
+
+=back
+
+Script converts one folder at time, to convert whole mailbox run it for each folder.
 
 See L<http://wiki2.dovecot.org/MailboxFormat/Maildir> and
 L<http://wiki.dovecot.org/MailboxFormat/mbox> for formats description.
 
 UIDVALIDITY and UIDs are not converted by this script.
 
-Recent flags are not preserved (all messages marked as non-recent).
+Recent flag is not preserved (all messages marked as non-recent).
