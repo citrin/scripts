@@ -11,11 +11,11 @@ for file in $@; do
 
 	width=`identify -format %w $file`
 
+	# 100 is overlap between lists
 	new_width=$(($width / 2 + 100))
 
-	# A4 size 210x297 (portland orient)
+	# A4 size 210x297 (portrait oriented)
 	new_height=$(( $new_width * 297 / 210 ))
-
 
 	convert -crop ${new_width}x${new_height}+0+0 -gravity NorthWest $NAME.$EXT $NAME-list1.png
 	convert -crop ${new_width}x${new_height}+0+0 -gravity NorthEast $NAME.$EXT $NAME-list2.png
