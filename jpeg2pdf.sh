@@ -21,7 +21,7 @@ for f in "$@" ; do
 	n=$((n+1))
 done
 
-gs -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -dQUIET \
+gs -sDEVICE=pdfwrite -dPDFSETTINGS=/printer -dQUIET \
 	-o "$outfile" viewjpeg.ps -c "$toc" -c "$param"
 
 # viewjpeg.ps is located in /usr/local/share/ghostscript/9.??/lib/viewjpeg.ps
