@@ -2,8 +2,6 @@
 
 # portmaster graphics/ImageMagick print/ghostscript9
 
-DPI=300
-
 if [ ! -r "$2" ]; then
         echo Usage: $0 merged.pdf page1.jpeg page2.jpeg ... pageN.jpeg
         exit 64
@@ -16,7 +14,8 @@ param=""
 toc=""
 n=1
 for f in "$@" ; do
-	size=$(identify -format "%[fx:round(72*w/${DPI})] %[fx:round(72*h/${DPI})]" "${f}")
+	# PostScript point is 1/72 inch
+	size=$(identify -format "%[fx:round(72 * w / resolution.x)] %[fx:round(72 * h / resolution.y)]" "${f}")
 	param="$param <</PageSize [${size}]>> setpagedevice (${f}) viewJPEG showpage"
 	toc="$toc [/Page $n /Title (File $f) /OUT pdfmark"
 	n=$((n+1))
