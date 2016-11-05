@@ -64,7 +64,17 @@ case $FILE in
 
 renice -n +15 -p $$ 2>/dev/null
 
-mp3splt -f -T2 -a -c "$CUE" -o "@N2 @a - @t" "${NAME}.mp3"
+if [ $CUE_ENCODING = latin1 ]; then
+	TAG_VER=12
+else
+	TAG_VER=2
+fi
+
+# file name format
+# @N2 - 2 digit track number
+# @A  - performer if found, otherwise artist
+# @t  - song title
+mp3splt -f -T${TAG_VER} -a -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
 
 # mp3gain broken: undo ID3 tags often not written
