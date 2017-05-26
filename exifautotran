@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+
+use 5.012;
+use warnings;
+
+use Image::ExifTool ();
+use File::Find qw/find/;
+use IPC::Cmd qw/ can_run /;
+
+my %TRANSFORM_MAP = (
+	2 => '-flip horizontal',
+	3 => '-rotate 180',
+	4 => '-flip vertical',
+	5 => '-transpose',
+	6 => '-rotate 90',
+	7 => '-transverse',
+	8 => '-rotate 270',
+);
+
+can_run('jpegtran')
+	or die "jpegtran is not found, try to install graphics/jpeg-turbo or graphics/jpeg\n";
+
+my $exifTool = new Image::ExifTool;
+
+my $dir = $ARGV[0];
+
+usage() unless -d $dir;
+
+find(\&auto_rotate, $dir);
+
+sub auto_rotate {
+	my $file = $File::Find::name;
+
+	return unless defined $file && -f $file;
+    return unless $file =~ /\.jpg$/i;
+
+	die "$file is not writable: $!" unless -w $file;
+
+	my $r = $exifTool->ExtractInfo($file, {FastScan => 2});
+	if ($r == 0) {
+		warn "can't extract EXIF from $file\n";
+		return;
+	}
+
+	my $orientation = $exifTool->GetValue('Orientation', 'Raw') or return;
+
+	my $transform = $TRANSFORM_MAP{$orientation} or return;
+
+	my $tmp = "$file.tmp$$";
+
+	# XXX will fail if filename contains quotes
+	my $cmd = "jpegtran -optimize -copy all $transform '$file' > '$tmp'";
+
+	system($cmd);
+
+	if ($? == -1) {
+		print "failed to execute '$cmd': $!\n";
+		unlink $tmp;
+		return;
+	}
+	elsif ($? & 127) {
+		printf "jpegtran died with signal %d for %s\n",
+			($? & 127), $file;
+		unlink $tmp;
+		return;
+	}
+	elsif ($? >> 8) {
+		printf "jpegtran exited with value %d for %s\n", $? >> 8, $file;
+		unlink $tmp;
+		return;
+	}
+
+	$exifTool->ExtractInfo($tmp);
+	$exifTool->SetNewValue('IFD0:Orientation' => 1, Type => 'ValueConv');
+	$exifTool->WriteInfo($tmp);
+
+	rename $tmp, $file;
+	warn "$file was rotated\n";
+}
+
+sub usage {
+	warn "Usage: $0 directory_with_photos_to_roate\n";
+    exit 1;
+}
