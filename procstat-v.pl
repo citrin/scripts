@@ -23,7 +23,8 @@ my %vm_obj_types = (
 
 my $l = <STDIN>;
 
-die unless $l =~ /PID\s+START\s+END\s+PRT\s+RES\s+PRES\s+REF\s+SHD\s+FL\s+TP\s+PATH/;
+die "Unknown format: $l\n"
+	unless $l =~ /PID\s+START\s+END\s+PRT\s+RES\s+PRES\s+REF\s+SHD\s+FL(AG)?\s+TP\s+PATH/;
 
 my $vm_objs;
 
