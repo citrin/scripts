@@ -17,7 +17,9 @@ fi
 message=`mktemp -t file2kindle`
 trap "rm -f $message" INT EXIT TERM
 
-ascii_file_name=$(basename $FILE | iconv -s -f UTF-8 -t KOI7-SWITCHED )
+# XXX beteer to encode non ASCII filename but it is not easy to do in shell
+# and I'm don't need it
+ascii_file_name=$(basename "$FILE" | iconv -s -f UTF-8 -t US-ASCII)
 file_mime_type=`file --brief --mime-type "$FILE"`
 rfc822_date=$(date -R)
 message_id="$(date +%s).$$@$(hostname)"
