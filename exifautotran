@@ -48,24 +48,24 @@ sub auto_rotate {
 
 	my $tmp = "$file.tmp$$";
 
-	# XXX will fail if filename contains quotes
-	my $cmd = "jpegtran -optimize -copy all $transform '$file' > '$tmp'";
+	# XXX thumbnails are not rotated
+	my @cmd = ('jpegtran', '-optimize', '-copy', 'all', $transform, '-outfile', $tmp, $file);
 
-	system($cmd);
+	system(@cmd);
 
 	if ($? == -1) {
-		print "failed to execute '$cmd': $!\n";
+		print "failed to execute '@cmd': $!\n";
 		unlink $tmp;
 		return;
 	}
 	elsif ($? & 127) {
-		printf "jpegtran died with signal %d for %s\n",
+		printf "'@cmd' died with signal %d for %s\n",
 			($? & 127), $file;
 		unlink $tmp;
 		return;
 	}
 	elsif ($? >> 8) {
-		printf "jpegtran exited with value %d for %s\n", $? >> 8, $file;
+		printf "'@cmd' exited with value %d for %s\n", $? >> 8, $file;
 		unlink $tmp;
 		return;
 	}
