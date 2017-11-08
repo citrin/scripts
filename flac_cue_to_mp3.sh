@@ -51,7 +51,7 @@ case $FILE in
 		flac -c -d "$FILE" | $LAME - "${NAME}.mp3"
 		;;
 	*.wv)
-		wvunpack --no-utf8-convert -c "${FILE}" > $CUE
+		wvunpack --no-utf8-convert -c "${FILE}" > "${CUE}"
 		wvunpack "${FILE}" -o - | $LAME - "${NAME}.mp3"
 		;;
 	*.wav)
