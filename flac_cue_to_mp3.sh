@@ -19,7 +19,8 @@ fi
 
 FILE=`basename "$1"`
 NAME=${FILE%.*}
-cd `dirname "$1"`
+DIR=`dirname "$1"`
+cd "${DIR}"
 
 LAME="lame --vbr-new -V $QUALITY"
 
