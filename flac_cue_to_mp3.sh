@@ -7,7 +7,7 @@
 # Enable  VBR  (Variable  BitRate)  and specifies the value of VBR
 # quality (default = 4).  0 = highest quality.
 
-: ${QUALITY=3}
+: ${QUALITY=2}
 : ${CUE_ENCODING=latin1}
 
 set -ex
@@ -21,7 +21,7 @@ FILE=`basename "$1"`
 NAME=${FILE%.*}
 cd `dirname "$1"`
 
-LAME="lame --vbr-new -V $QUALITY -B 320"
+LAME="lame --vbr-new -V $QUALITY"
 
 # find .cue file for all types exept .wv (contains embedded CUE)
 if [ "${FILE##*.}" = "wv" ]; then
