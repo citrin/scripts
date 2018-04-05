@@ -75,7 +75,7 @@ fi
 # @N2 - 2 digit track number
 # @A  - performer if found, otherwise artist
 # @t  - song title
-mp3splt -f -T${TAG_VER} -a -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
+mp3splt -f -T${TAG_VER} -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
 
 # mp3gain broken: undo ID3 tags often not written
