@@ -78,6 +78,5 @@ fi
 mp3splt -f -T${TAG_VER} -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
 
-# mp3gain broken: undo ID3 tags often not written
-# and changes are irreversible
-#mp3gain -k -a -s i *.mp3
+# Write RVA2 id3v2.4.0 tag
+mp3gain -s i *.mp3
