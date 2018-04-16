@@ -67,15 +67,17 @@ renice -n +15 -p $$ 2>/dev/null
 
 if [ $CUE_ENCODING = latin1 ]; then
 	TAG_VER=12
+	ID3V2_ENC=1  # latin1
 else
 	TAG_VER=2
+	ID3V2_ENC=16 # UTF-16
 fi
 
 # file name format
 # @N2 - 2 digit track number
 # @A  - performer if found, otherwise artist
 # @t  - song title
-mp3splt -f -T${TAG_VER} -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
+mp3splt -f -T ${TAG_VER} -C ${ID3V2_ENC} -c "$CUE" -o "@N2 - @t" "${NAME}.mp3"
 rm "${NAME}.mp3"
 
 # Write RVA2 id3v2.4.0 tag
