@@ -21,6 +21,7 @@ FILE=`basename "$1"`
 NAME=${FILE%.*}
 DIR=`dirname "$1"`
 cd "${DIR}"
+renice -n +15 -p $$ 2>/dev/null
 
 LAME="lame --noreplaygain --vbr-new -V $QUALITY"
 
@@ -62,8 +63,6 @@ case $FILE in
 		echo unsupported format
 		exit 1
 	esac
-
-renice -n +15 -p $$ 2>/dev/null
 
 if [ $CUE_ENCODING = latin1 ]; then
 	TAG_VER=12
