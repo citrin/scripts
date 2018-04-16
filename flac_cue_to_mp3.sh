@@ -22,7 +22,7 @@ NAME=${FILE%.*}
 DIR=`dirname "$1"`
 cd "${DIR}"
 
-LAME="lame --vbr-new -V $QUALITY"
+LAME="lame --noreplaygain --vbr-new -V $QUALITY"
 
 # find .cue file for all types exept .wv (contains embedded CUE)
 if [ "${FILE##*.}" = "wv" ]; then
